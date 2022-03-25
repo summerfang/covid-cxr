@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Module src.data",
+            "type": "python",
+            "request": "launch",
+            "module": "src.data.${fileBasenameNoExtension}",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Module src",
+            "type": "python",
+            "request": "launch",
+            "module": "src.${fileBasenameNoExtension}",
+            "justMyCode": true
+        },        
+        {
+            "name": "Python: Module src.interpretability",
+            "type": "python",
+            "request": "launch",
+            "module": "src.interpretability.${fileBasenameNoExtension}",
+            "justMyCode": true
+        }        
+    ]
+}
