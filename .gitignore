@@ -1,3 +1,6 @@
+data/covid-chestxray-dataset
+data/Figure1-COVID-chestxray-dataset
+data/rsna
 data/processed/*
 data/raw/*
 data/transformers/*

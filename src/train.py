@@ -340,9 +340,9 @@ def train_experiment(cfg=None, experiment='single_train', save_weights=True, wri
 
     # Set logs directory
     cur_date = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
-    log_dir = cfg['PATHS']['LOGS'] + "training\\" + cur_date if write_logs else None
-    if not os.path.exists(cfg['PATHS']['LOGS'] + "training\\"):
-        os.makedirs(cfg['PATHS']['LOGS'] + "training\\")
+    log_dir = cfg['PATHS']['LOGS'] + "training/" + cur_date if write_logs else None
+    if not os.path.exists(cfg['PATHS']['LOGS'] + "training/"):
+        os.makedirs(cfg['PATHS']['LOGS'] + "training/")
 
     # Load dataset file paths and labels
     data = {}
@@ -356,11 +356,11 @@ def train_experiment(cfg=None, experiment='single_train', save_weights=True, wri
 
     # Conduct the desired train experiment
     if experiment == 'hparam_search':
-        log_dir = cfg['PATHS']['LOGS'] + "hparam_search\\" + cur_date
+        log_dir = cfg['PATHS']['LOGS'] + "hparam_search/" + cur_date
         random_hparam_search(cfg, data, callbacks, log_dir)
     else:
         if experiment == 'multi_train':
-            base_log_dir = cfg['PATHS']['LOGS'] + "training\\" if write_logs else None
+            base_log_dir = cfg['PATHS']['LOGS'] + "training/" if write_logs else None
             model, test_metrics, test_generator, cur_date = multi_train(cfg, data, callbacks, base_log_dir)
         else:
             if write_logs:
