@@ -1,3 +1,9 @@
+# Summer Fang makes it work on Mac
+* Change the requirements.txt to not use gpu and fix h5py version
+* Add shell covid_data.sh to download xray files
+* Fix code issue which use "\\" in windows
+* Fix code issue which can't run predict
+
 # COVID-19 Chest X-Ray Model
 
 The goals of this project are threefold: (1) to explore development of a machine learning
