@@ -10,7 +10,7 @@ git clone https://github.com/ieee8023/covid-chestxray-dataset.git
 pip install kaggle
 
 # Set API token of Kagge
-echo '{"username":"xxxx","key":"xxxx"}' > kaggle.json
+echo '{"username":"summerfang","key":"585bcb7bc55cb740b08195410a05997c"}' > kaggle.json
 mkdir ~/.kaggle
 mv kaggle.json ~/.kaggle
 kaggle competitions download -c rsna-pneumonia-detection-challenge
