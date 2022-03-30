@@ -5,7 +5,7 @@ from tensorflow.keras.regularizers import l2
 from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras.initializers import Constant
 from tensorflow.keras.applications.resnet_v2 import ResNet50V2, ResNet101V2
-from tensorflow.keras.utils import multi_gpu_model
+from tensorflow.python.keras.utils.multi_gpu_utils import multi_gpu_model
 
 
 def dcnn_resnet(model_config, input_shape, metrics, n_classes=2, output_bias=None, gpus=1):

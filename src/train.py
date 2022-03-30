@@ -106,7 +106,7 @@ def train_model(cfg, data, callbacks, verbose=1):
     # Define metrics.
     covid_class_idx = test_generator.class_indices['COVID-19']   # Get index of COVID-19 class
     thresholds = 1.0 / len(cfg['DATA']['CLASSES'])      # Binary classification threshold for a class
-    metrics = ['accuracy', CategoricalAccuracy(name='accuracy'),
+    metrics = [CategoricalAccuracy(name='accuracy'),
                Precision(name='precision', thresholds=thresholds, class_id=covid_class_idx),
                Recall(name='recall', thresholds=thresholds, class_id=covid_class_idx),
                AUC(name='auc'),
@@ -137,9 +137,10 @@ def train_model(cfg, data, callbacks, verbose=1):
     # Train the model.
     steps_per_epoch = ceil(train_generator.n / train_generator.batch_size)
     val_steps = ceil(val_generator.n / val_generator.batch_size)
-    history = model.fit_generator(train_generator, steps_per_epoch=steps_per_epoch, epochs=cfg['TRAIN']['EPOCHS'],
+    history = model.fit(train_generator, steps_per_epoch=steps_per_epoch, epochs=cfg['TRAIN']['EPOCHS'],
                                   validation_data=val_generator, validation_steps=val_steps, callbacks=callbacks,
-                                  verbose=verbose, class_weight=class_weight)
+                                  verbose=verbose)
+                           
 
     # Run the model on the test set and print the resulting performance metrics.
     test_results = model.evaluate_generator(test_generator, verbose=1)
