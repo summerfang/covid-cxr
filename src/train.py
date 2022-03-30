@@ -82,18 +82,18 @@ def train_model(cfg, data, callbacks, verbose=1):
     img_shape = tuple(cfg['DATA']['IMG_DIM'])
     y_col = 'label_str'
     class_mode = 'categorical'
-    train_generator = train_img_gen.flow_from_dataframe(dataframe=data['TRAIN'], directory=Path(cfg['PATHS']['RAW_DATA']),
+    train_generator = train_img_gen.flow_from_dataframe(dataframe=data['TRAIN'], directory=cfg['PATHS']['RAW_DATA'],
         x_col="filename", y_col=y_col, target_size=img_shape, batch_size=cfg['TRAIN']['BATCH_SIZE'],
         class_mode=class_mode, validate_filenames=False)
-    val_generator = val_img_gen.flow_from_dataframe(dataframe=data['VAL'], directory=Path(cfg['PATHS']['RAW_DATA']),
+    val_generator = val_img_gen.flow_from_dataframe(dataframe=data['VAL'], directory=cfg['PATHS']['RAW_DATA'],
         x_col="filename", y_col=y_col, target_size=img_shape, batch_size=cfg['TRAIN']['BATCH_SIZE'],
         class_mode=class_mode, validate_filenames=False)
-    test_generator = test_img_gen.flow_from_dataframe(dataframe=data['TEST'], directory=Path(cfg['PATHS']['RAW_DATA']),
+    test_generator = test_img_gen.flow_from_dataframe(dataframe=data['TEST'], directory=cfg['PATHS']['RAW_DATA'],
         x_col="filename", y_col=y_col, target_size=img_shape, batch_size=cfg['TRAIN']['BATCH_SIZE'],
         class_mode=class_mode, validate_filenames=False, shuffle=False)
 
     # Save model's ordering of class indices
-    dill.dump(test_generator.class_indices, open(Path(cfg['PATHS']['OUTPUT_CLASS_INDICES']), 'wb'))
+    dill.dump(test_generator.class_indices, open(cfg['PATHS']['OUTPUT_CLASS_INDICES'], 'wb'))
 
     # Apply class imbalance strategy. We have many more X-rays negative for COVID-19 than positive.
     histogram = np.bincount(np.array(train_generator.labels).astype(int))  # Get class distribution
@@ -337,19 +337,19 @@ def train_experiment(cfg=None, experiment='single_train', save_weights=True, wri
 
     # Load project config data
     if cfg is None:
-        cfg = yaml.full_load(open(Path(os.getcwd()) / "config.yml", 'r'))
+        cfg = yaml.full_load(open(os.getcwd() + "/config.yml", 'r'))
 
     # Set logs directory
     cur_date = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
     log_dir = cfg['PATHS']['LOGS'] + "training/" + cur_date if write_logs else None
-    if not os.path.exists(Path(cfg['PATHS']['LOGS'] + "training/")):
-        os.makedirs(Path(cfg['PATHS']['LOGS'] + "training/"))
+    if not os.path.exists(cfg['PATHS']['LOGS'] + "training/"):
+        os.makedirs(cfg['PATHS']['LOGS'] + "training/")
 
     # Load dataset file paths and labels
     data = {}
-    data['TRAIN'] = pd.read_csv(Path(cfg['PATHS']['TRAIN_SET']))
-    data['VAL'] = pd.read_csv(Path(cfg['PATHS']['VAL_SET']))
-    data['TEST'] = pd.read_csv(Path(cfg['PATHS']['TEST_SET']))
+    data['TRAIN'] = pd.read_csv(cfg['PATHS']['TRAIN_SET'])
+    data['VAL'] = pd.read_csv(cfg['PATHS']['VAL_SET'])
+    data['TEST'] = pd.read_csv(cfg['PATHS']['TEST_SET'])
 
     # Set callbacks.
     early_stopping = EarlyStopping(monitor='val_loss', verbose=1, patience=cfg['TRAIN']['PATIENCE'], mode='min', restore_best_weights=True)
@@ -361,7 +361,7 @@ def train_experiment(cfg=None, experiment='single_train', save_weights=True, wri
         random_hparam_search(cfg, data, callbacks, log_dir)
     else:
         if experiment == 'multi_train':
-            base_log_dir = Path(cfg['PATHS']['LOGS'] + "training/") if write_logs else None
+            base_log_dir = cfg['PATHS']['LOGS'] + "training/" if write_logs else None
             model, test_metrics, test_generator, cur_date = multi_train(cfg, data, callbacks, base_log_dir)
         else:
             if write_logs:
@@ -369,13 +369,13 @@ def train_experiment(cfg=None, experiment='single_train', save_weights=True, wri
                 callbacks.append(tensorboard)
             model, test_metrics, test_generator = train_model(cfg, data, callbacks)
             if write_logs:
-                log_test_results(cfg, model, test_generator, test_metrics, Path(log_dir))
+                log_test_results(cfg, model, test_generator, test_metrics, log_dir)
         if save_weights:
             model_path = cfg['PATHS']['MODEL_WEIGHTS'] + 'model' + cur_date + '.h5'
-            save_model(model, Path(model_path))  # Save the model's weights
+            save_model(model, model_path)  # Save the model's weights
     return
 
 
 if __name__ == '__main__':
-    cfg = yaml.full_load(open(Path(os.getcwd()) / "config.yml", 'r'))
+    cfg = yaml.full_load(open(os.getcwd() + "/config.yml", 'r'))
     train_experiment(cfg=cfg, experiment=cfg['TRAIN']['EXPERIMENT_TYPE'], save_weights=True, write_logs=True)
